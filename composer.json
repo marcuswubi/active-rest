@@ -1,0 +1,24 @@
+{
+    "name": "marcus/active-rest",
+    "description": "This is a library to make CRUD's with your REST API. With this package, and some framework like Slim. You can abstract operations: POST,PUT,PATCH,DELETE,FIND,FINDONE at your Routes.",
+    "type": "lib",
+    "require": {
+        "solis/phpbreaker": "^1.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.0",
+        "phpunit/phpunit": "^6.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marcus Vinicius Mendes Goncalves",
+            "email": "marcus@wubi.com.br"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ActiveRest\\": "app/src/ActiveRest"
+        }
+    }
+}

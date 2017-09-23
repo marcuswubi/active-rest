@@ -1,0 +1,56 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "0921d0bf8a8b6f2c822a9f73a8a3735c",
+    "content-hash": "aedd3bad0517f6dc5d9d902bfd4a18d8",
+    "packages": [
+        {
+            "name": "solis/phpbreaker",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rafaelbeecker/phpbreaker.git",
+                "reference": "d3963b4b7e77578ece45c72fb34507c58dc8fa0f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rafaelbeecker/phpbreaker/zipball/d3963b4b7e77578ece45c72fb34507c58dc8fa0f",
+                "reference": "d3963b4b7e77578ece45c72fb34507c58dc8fa0f",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*",
+                "squizlabs/php_codesniffer": "3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Solis\\Breaker\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rafael Becker",
+                    "email": "rafael@beecker.com.br"
+                }
+            ],
+            "description": "PhpBreaker is a exception handling toolkit",
+            "time": "2017-08-05 14:15:14"
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
