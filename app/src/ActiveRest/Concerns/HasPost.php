@@ -3,7 +3,7 @@
 namespace ActiveRest\Concerns;
 
 //texception
-use LazyFramework\Core\Helpers\JsonExtract\JsonExtract;
+use ActiveRest\Helpers\JsonExtract;
 use Solis\Breaker\TException;
 use Solis\Breaker\Abstractions\TExceptionAbstract;
 
