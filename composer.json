@@ -1,5 +1,5 @@
 {
-    "name": "marcus/active-rest",
+    "name": "wubi/active-rest",
     "description": "This is a library to make CRUD's with your REST API. With this package, and some framework like Slim. You can abstract operations: POST,PUT,PATCH,DELETE,FIND,FINDONE at your Routes.",
     "type": "lib",
     "require": {
