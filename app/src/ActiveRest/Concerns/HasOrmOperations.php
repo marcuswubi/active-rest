@@ -12,6 +12,7 @@ trait HasOrmOperations
     use HasModel,
         HasFunctions,
         HasFind,
+        HasFindOne,
         HasPost,
         HasPatch,
         HasPut,

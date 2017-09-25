@@ -3,7 +3,7 @@
 namespace ActiveRest\Concerns;
 
 //dependencias
-use SmartFramework\Helpers\Request\Find;
+use ActiveRest\Helpers\Find;
 use Solis\Breaker\Abstractions\TExceptionAbstract;
 
 /**
