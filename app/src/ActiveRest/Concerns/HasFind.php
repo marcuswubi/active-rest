@@ -3,7 +3,7 @@
 namespace ActiveRest\Concerns;
 
 //dependencias
-use LazyFramework\Core\Helpers\Request\Find;
+use ActiveRest\Helpers\Find;
 //texception
 use Solis\Breaker\Abstractions\TExceptionAbstract;
 
@@ -59,47 +59,57 @@ trait HasFind
         bool $withAlias = false
     ): array {
         try {
-            // Inicia o retorno
-            $count = 0;
-            $aRetorno = [
-                'status' => true,
-                'message' => '',
-                'count' => $count,
-                'data' => []
-            ];
-
-            // Realiza a consulta com base nos filtros informados
+            //PARAM VALIDATE
             $params = $this->beforeFind($params);
             $params = Find::params(empty($params['param']) ? [] : $params['param']);
-            if (!empty($params)) {
-                $aModels = $this->getModel()->select(
-                    $params['arguments'],
-                    $params['options']
-                );
 
-                if (!empty($aModels)) {
-                    $aModels = !is_array($aModels) ? [$aModels] : $aModels;
+            // DO QUERY
+            $count = 0;
+            $data = [];
+            $aModels = $this->getModel()->select(
+                $params['arguments'],
+                $params['options']
+            );
 
-                    // Contagem dos dados retornados
-                    $aRetorno['count'] = $this->getModel()->count($params['arguments']);
+            //RESULTS VALIDATION
+            if (!empty($aModels)) {
+                $aModels = !is_array($aModels) ? [$aModels] : $aModels;
 
-                    // Converte os objetos em array para retornar
-                    $aRetorno['data'] = [];
-                    foreach ($aModels as $model) {
-                        $aRetorno['data'][] = $model->toArray($withAlias);
-                    }
+                //COUNT RETURN WITH SAME ARGUMENTS
+                $count = $this->getModel()->count($params['arguments']);
+
+                //CONVERT OBJECTS RETURNED TO ARRAY
+                foreach ($aModels as $model) {
+                    $data[] = $model->toArray($withAlias);
                 }
             }
 
+            //AFTER FIND
+            $afterFind = $this->afterFind($data);
+            if ($afterFind['status'] !== true) {
+                return [
+                    'data' => $afterFind['params'],
+                    'headers' => [
+                        'count' => $count,
+                        'statusCode' => 400,
+                        'dateTime' => Date('Y-m-d H:i:s'),
+                    ]
+                ];
+            }
+            $data = $afterFind['param'];
 
-            // Valida execução
-            $aRetorno['status'] = !empty($aRetorno['data']) ? true : false;
-            $aRetorno['message'] = !empty($aRetorno['data']) ? self::$MSG_CONSULTA_SUCCESS : self::$MSG_CONSULTA_FAIL;
-
-
-            // Retorno Geral
-            $retorno = $this->afterFind($aRetorno);;
-            return $retorno['param'];
+            //RETURN
+            $page = $params['arguments']['limit']['number']
+                ? $params['arguments']['limit']['number']
+                : 0;
+            return [
+                'data' => $data,
+                'headers' => [
+                    'count' => $count,
+                    'statusCode' => 200,
+                    'dateTime' => Date('Y-m-d H:i:s'),
+                ],
+            ];
         } catch (TExceptionAbstract $e) {
             return $e->toArray();
         }

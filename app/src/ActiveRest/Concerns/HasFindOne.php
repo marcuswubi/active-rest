@@ -3,7 +3,7 @@
 namespace ActiveRest\Concerns;
 
 //dependencias
-use ActiveRest\Helpers\Find;
+use SmartFramework\Helpers\Request\Find;
 use Solis\Breaker\Abstractions\TExceptionAbstract;
 
 /**
@@ -21,7 +21,7 @@ trait HasFindOne
      * @param $param
      * @return array
      */
-    public function beforeFind(
+    public function beforeFindOne(
         array $param
     ): array {
         try {
@@ -36,7 +36,7 @@ trait HasFindOne
      * @param $param
      * @return array
      */
-    public function afterFind(
+    public function afterFindOne(
         $param
     ): array {
         try {
@@ -52,52 +52,59 @@ trait HasFindOne
      * @param bool $withAlias - Retorna como de Alias se verdadeiro
      * @return array
      */
-    public function find(
+    public function findOne(
         array $params = [],
         bool $withAlias = false
     ): array {
         try {
-            // Inicia o retorno
-            $count = 0;
-            $aRetorno = [
-                'status' => true,
-                'message' => '',
-                'count' => $count,
-                'data' => []
-            ];
-
-            // Realiza a consulta com base nos filtros informados
-            $params = $this->beforeFind($params);
+            //PARAM VALIDATE
+            $params = $this->beforeFindOne($params);
             $params = Find::params(empty($params['param']) ? [] : $params['param']);
-            if (!empty($params)) {
-                $aModels = $this->getModel()->select(
-                    $params['arguments'],
-                    $params['options']
-                );
 
-                if (!empty($aModels)) {
-                    $aModels = !is_array($aModels) ? [$aModels] : $aModels;
+            // DO QUERY
+            $count = 0;
+            $data = [];
+            $aModels = $this->getModel()->select(
+                $params['arguments'],
+                $params['options']
+            );
 
-                    // Contagem dos dados retornados
-                    $aRetorno['count'] = $this->getModel()->count($params['arguments']);
+            //RESULTS VALIDATION
+            if (!empty($aModels)) {
+                $aModels = !is_array($aModels) ? [$aModels] : $aModels;
 
-                    // Converte os objetos em array para retornar
-                    $aRetorno['data'] = [];
-                    foreach ($aModels as $model) {
-                        $aRetorno['data'][] = $model->toArray($withAlias);
-                    }
+                //COUNT RETURN WITH SAME ARGUMENTS
+                $count = $this->getModel()->count($params['arguments']);
+
+                //CONVERT OBJECTS RETURNED TO ARRAY
+                foreach ($aModels as $model) {
+                    $data[] = $model->toArray($withAlias);
                 }
             }
 
+            //AFTER FIND
+            $afterFind = $this->afterFindOne($data);
+            if ($afterFind['status'] !== true) {
+                return [
+                    'data' => $afterFind['params'],
+                    'headers' => [
+                        'count' => $count,
+                        'statusCode' => 400,
+                        'dateTime' => Date('Y-m-d H:i:s'),
+                    ]
+                ];
+            }
+            $data = $afterFind['param'];
 
-            // Valida execução
-            $aRetorno['status'] = !empty($aRetorno['data']) ? true : false;
-            $aRetorno['message'] = !empty($aRetorno['data']) ? self::$MSG_CONSULTA_SUCCESS : self::$MSG_CONSULTA_FAIL;
-
-
-            // Retorno Geral
-            $retorno = $this->afterFind($aRetorno);;
-            return $retorno['param'];
+            //RETURN
+            return [
+                'data' => $data,
+                'headers' => [
+                    'count' => $count,
+                    'statusCode' => 200,
+                    'dateTime' => Date('Y-m-d H:i:s'),
+                ],
+            ];
         } catch (TExceptionAbstract $e) {
             return $e->toArray();
         }
